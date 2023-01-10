@@ -21,7 +21,7 @@ const getAllProduct=async(req,res)=>{
 const getSingleProduct=async(req,res)=>{
   const {id:productId}=req.params;
 
-  const product=await Product.findOne({_id:productId})
+  const product=await Product.findOne({_id:productId}).populate('reviews')
   if(!product){
     throw new BadRequestError(`No product with such ${productId}`)
   }
@@ -40,7 +40,7 @@ const deleteProduct=async(req,res)=>{
   }
 
   await product.remove()
-  res.status(StatusCodes.OK).json({product,msg:'Product successfully deleted'})
+  res.status(StatusCodes.OK).json({msg:'Product successfully deleted'})
 }
 
 const updateProduct=async(req,res)=>{
@@ -55,31 +55,29 @@ const updateProduct=async(req,res)=>{
 }
 
 const uploadProductImage=async(req,res)=>{
-  if (!req.files) {
-    throw new BadRequestError('No File Uploaded');
-  }
-  const productImage = req.files.image;
+   if(!req.files){
+    throw new BadRequestError('Image not uploaded')
+   }
 
-  if (!productImage.mimetype.startsWith('image')) {
-    throw new BadRequestError('Please Upload Image');
-  }
+   const productImage=req.files.image;
+   if(!productImage.mimetype.startsWith('image')){
+    throw new BadRequestError('Please upload image')
+   }
+   const imageSize=1024 * 1024;
+   if(productImage.size > imageSize){
+    throw new BadRequestError('Image must not exceed more than 1MB')
+   }
 
-  const maxSize = 1024 * 1024;
+const imagePath=path.join('./public/uploads', `${productImage.name}`);
+   
 
-  if (productImage.size > maxSize) {
-    throw new BadRequestError(
-      'Please upload image smaller than 1MB'
-    );
-  }
+   await productImage.mv(imagePath);
 
-  const imagePath = path.join(
-    __dirname,
-    '../public/uploads/' + `${productImage.name}`
-  );
-  await productImage.mv(imagePath);
-  res.status(StatusCodes.OK).json({ image: `/uploads/${productImage.name}` });
-
+   res.status(StatusCodes.OK).json({image:`/uploads/${productImage.name}`})
 };
+
+
+
 
 
 

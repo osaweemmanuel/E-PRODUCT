@@ -11,7 +11,7 @@ const start = async () => {
     await connectDB(process.env.MONGO_URL)
     await Product.deleteMany()
     const jsonProducts = JSON.parse(
-      await readFile(new URL('./MOCK_DATA.json', import.meta.url))
+      await readFile(new URL('./products.json', import.meta.url))
     )
     await Product.create(jsonProducts)
     console.log('Success!!!')

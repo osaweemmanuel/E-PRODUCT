@@ -15,6 +15,9 @@ import connectDB from './db/connect.js'
 import authRouter from './routes/authRoute.js'
 import userRouter from './routes/userRoute.js'
 import productRouter from './routes/ProductRoute.js'
+import reviewRouter from './routes/reviewRoute.js'
+import orderRouter from './routes/orderRoute.js'
+import stripeRouter from './routes/stripeRoute.js'
 
 
 
@@ -37,12 +40,18 @@ app.get('/',(req,res)=>{
 app.use(express.json())
 app.use(cookieParser(process.env.JWT_SECRET))
 
+app.use(express.static('./public'));
+app.use(fileUpload());
+
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/users',userRouter)
 app.use('/api/v1/products',productRouter)
+app.use('/api/v1/reviews',reviewRouter)
+app.use('/api/v1/orders',orderRouter)
+app.use('/api/v1/stripe',stripeRouter)
 
-app.use(express.static('./public'))
-app.use(fileUpload())
+
+
 
 app.use(notFoundMiddleware)
 app.use(errorHandlerMiddleware)
