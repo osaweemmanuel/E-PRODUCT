@@ -3,7 +3,7 @@ import BadRequestError from '../errors/bad-request.js';
 import NotFoundError from '../errors/not-found.js';
 import Product from '../models/Product.js'
 import Order from '../models/Order.js';
-import CreatePayment from "./paymentController.js";
+
 
 
 
@@ -44,10 +44,7 @@ const createOrder=async(req,res)=>{
         res.status(401).send({success:false, error:"Missing field. Checkout Details"});
       }
       subtotal+= item.amount * price;
-      req.body.checkoutItems = orderItems;
-      req.body.asService = true;
-      const paymentLink = await CreatePayment(req, res);
-      res.status(303).send({success:true, paymentLink});
+    
    }
 
 //calculate the sum total
